@@ -1,0 +1,8 @@
+{
+  "name": "nodepi-frog",
+  "version": "0.0.1",
+  "description": "With this package",
+  "main": "./modules/nodepi-frog.js",
+  "author": "milleniumfrog",
+  "license": "MIT"
+}
