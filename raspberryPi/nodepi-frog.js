@@ -1,6 +1,9 @@
 const fs = require('fs');
 const {execSync} = require('child_process');
 const events = require('events');
+
+console.log = function(string){};
+
 let emitter = new events.EventEmitter();
 
 
@@ -62,7 +65,7 @@ let direction = function(gpio, direction = 'out'){
     }
     else{
         console.log(`the pin ${gpio.pin} had the direction ${gpio.direction}`);
-        console.log(`set the direction for the pin ${gpio.pin}`);
+        console.log(`set the direction for the pin ${gpio.pin} to ${direction}`);
         let direct = `echo "${direction}" > /sys/class/gpio/gpio${gpio.pin}/direction`;
         execSync(direct);
 
@@ -79,11 +82,11 @@ let direction = function(gpio, direction = 'out'){
 let write = function(gpio, value = true){
 
     if(!fs.existsSync(`/sys/class/gpio/gpio${gpio.pin}/direction`)){
-        throw new Error('you cannot write to a pin that has not the direction "out"');
+        throw new Error(`you cannot write to the pin ${gpio.pin} which has not the direction "out" `);
     }
 
     if(gpio.direction !== 'out'){
-        throw new Error('you cannot write to a pin that has not the direction "out"');
+        throw new Error(`you cannot write to the pin ${gpio.pin} which has not the direction "out" `);
     }
 
     if(typeof(value) === "boolean"){
@@ -116,6 +119,7 @@ let write = function(gpio, value = true){
  * read the Input of a gpio pin
  * @param {object} gpio
  * @param {boolean} invert
+ * @return {boolean}
  */
 let read = function(gpio, invert = false){
 
@@ -128,10 +132,13 @@ let read = function(gpio, invert = false){
     }
 
     if(invert){
+        console.log('read');
         gpio.value = Number(fs.readFileSync(`/sys/class/gpio/gpio${gpio.pin}/value`)) === 1 ? LOW : HIGH;
+        return gpio.value;
     }
     else {
         gpio.value = Number(fs.readFileSync(`/sys/class/gpio/gpio${gpio.pin}/value`)) === 1 ? HIGH : LOW;
+        return gpio.value;
     }
 };
 
